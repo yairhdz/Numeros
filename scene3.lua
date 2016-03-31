@@ -15,7 +15,7 @@ local nextSceneButton
 local numeros = {}
 local currentNumber = nil
 local currentIdx = 1
-local time = 100
+local time = 1000
 local nums = { [0] = "cero", "Uno", "Dos", "Tres", "Cuatro", "Cinco", "Seis", "Siete", "Ocho", "Nueve"}
 ---------------------------------------------------------------------------------
 
@@ -26,10 +26,10 @@ local function creaNumeros()
     print(nums[i])
     local numeroDg = display.newGroup()
     local cuadro = display.newRect(i * offsetX + 50, y, 50, 50)
-    cuadro:setFillColor(0, 0.6, 0.3)
+    cuadro:setFillColor(0.5, 0.6, 0.7)
 
     local numero = display.newText(i, i * offsetX + 50, y, native.systemFont, 40 )
-    numero:setFillColor(1,0,0)
+    numero:setFillColor(1, 1, 1)
 
     numeroDg:insert(cuadro,true)
     numeroDg:insert(numero,true)
@@ -106,6 +106,7 @@ end
 local button1 = widget.newButton(
     {
         label = "Repetir",
+        font = native.systemFontBold,
         fontSize = 40,
         onEvent = touchListener,
         emboss = false,
@@ -114,10 +115,10 @@ local button1 = widget.newButton(
         x = display.contentCenterX + 350,
         y = display.contentCenterY + 300,
         width = 200,
-        height = 40,
+        height = 60,
         cornerRadius = 2,
-        fillColor = { default={1,0,0,1}, over={1,0.1,0.7,0.4} },
-        strokeColor = { default={1,0.4,0,1}, over={0.8,0.8,1,1} },
+        fillColor = { default={0.9,0.9,0.4,1}, over={0.9,0.9,0.4,0.6} },
+        strokeColor = { default={0,0,0,1}, over={0.8,0.8,1,1} },
         strokeWidth = 4
     }
 )
@@ -133,7 +134,7 @@ local button1 = widget.newButton(
   function scene:create( event )
     local sceneGroup = self.view
     local fondo = display.newRect(display.contentCenterX, display.contentCenterY, display.actualContentWidth, display.actualContentHeight)
-    fondo:setFillColor(0.8,0.2,.9)
+    fondo:setFillColor(0.2,0.4,0.9)
     creaNumeros()
     animaNumeros()
 
