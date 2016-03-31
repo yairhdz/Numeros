@@ -150,33 +150,13 @@ local button1 = widget.newButton(
 
     if phase == "will" then
       -- Called when the scene is still off screen and is about to move on screen
-      local title = self:getObjectByName( "Title" )
-      title.x = display.contentWidth / 2
-      title.y = display.contentHeight / 2
-      title.size = display.contentWidth / 10
-      local goToScene1Btn = self:getObjectByName( "GoToScene1Btn" )
-      goToScene1Btn.x = display.contentWidth - 95
-      goToScene1Btn.y = display.contentHeight - 35
-      local goToScene1Text = self:getObjectByName( "GoToScene1Text" )
-      goToScene1Text.x = display.contentWidth - 92
-      goToScene1Text.y = display.contentHeight - 35
+      
     elseif phase == "did" then
       -- Called when the scene is now on screen
       -- 
       -- INSERT code here to make the scene come alive
       -- e.g. start timers, begin animation, play audio, etc
-      nextSceneButton = self:getObjectByName( "GoToScene1Btn" )
-      if nextSceneButton then
-        -- touch listener for the button
-        function nextSceneButton:touch ( event )
-          local phase = event.phase
-          if "ended" == phase then
-            composer.gotoScene( "view.onLoadApp", { effect = "fade", time = 300 } )
-          end
-        end
-        -- add the touch event listener to the button
-        nextSceneButton:addEventListener( "touch", nextSceneButton )
-      end
+      
     end 
   end
 
