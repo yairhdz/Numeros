@@ -7,6 +7,7 @@
 local sceneName = ...
 
 local composer = require( "composer" )
+ local widget  = require( "widget" )
 
 -- Load scene with same root filename as this file
 local scene = composer.newScene( sceneName )
@@ -91,9 +92,41 @@ function animaNumeros()
 
 
   function activateTouch()
-    local repetirButton = display.newRect(300, 300, 200, 50)
-    repetirButton:setFillColor(0.8, 0.2, 0.1)
-    repetirButton:addEventListener("touch", touchListener)
+   
+
+-- Function to handle button events
+local function handleButtonEvent( event )
+
+    if ( "ended" == event.phase ) then
+        print( "Button was pressed and released" )
+    end
+end
+
+-- Create the widget
+local button1 = widget.newButton(
+    {
+        label = "Repetir",
+        fontSize = 40,
+        onEvent = touchListener,
+        emboss = false,
+        -- Properties for a rounded rectangle button
+        shape = "roundedRect",
+        x = display.contentCenterX + 350,
+        y = display.contentCenterY + 300,
+        width = 200,
+        height = 40,
+        cornerRadius = 2,
+        fillColor = { default={1,0,0,1}, over={1,0.1,0.7,0.4} },
+        strokeColor = { default={1,0.4,0,1}, over={0.8,0.8,1,1} },
+        strokeWidth = 4
+    }
+)
+
+-- Center the button
+
+
+-- Change the button's label text
+--button1:setLabel( "Shape" )
   end
 
 
