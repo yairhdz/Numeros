@@ -17,7 +17,7 @@ local nextSceneButton
 
 function scene:create( event )
     local sceneGroup = self.view
-
+    print("scene2")
     -- Called when the scene's view does not exist
     -- 
     -- INSERT code here to initialize the scene
