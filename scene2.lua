@@ -51,7 +51,7 @@ function scene:show( event )
         	function nextSceneButton:touch ( event )
         		local phase = event.phase
         		if "ended" == phase then
-        			composer.gotoScene( "view.secuencia", { effect = "fade", time = 300 } )
+        			composer.gotoScene( "view.ordenar", { effect = "fade", time = 300 } )
         		end
         	end
         	-- add the touch event listener to the button
