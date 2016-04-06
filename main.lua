@@ -9,6 +9,7 @@ display.setStatusBar( display.HiddenStatusBar )
 
 -- require the composer library
 local composer = require "composer"
+require("mobdebug").start()
 
 -- load scene1
 composer.gotoScene( "view.onLoadApp" )
