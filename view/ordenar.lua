@@ -11,10 +11,124 @@ local setup    = require( "system.setup" )
 local scene = composer.newScene()
 local reorderedNumbers = {}
 local numeros = {}
+local boxes = {}
+local answer = ""
 
 
 -- -----------------------------------------------------------------------------------------------------------------
 -- Local forward references should go local function creaNumeros() 
+
+local function isHover(number, box)
+    local fw = number.width * 0.5
+    local fh = number.height * 0.5
+    if (box.x >= (number.x - fw) and box.x <= (number.x + fw) and box.y >= (number.y - fh) and box.y <= (number.y + fh)) then
+        return true
+    end
+    return false
+end
+
+local function getBoxHolder(event)
+    local target = event.target
+    for i=1,#boxes do
+        if(isHover(target, boxes[i])) then
+            return boxes[i]
+        end
+    end
+end
+
+local function popUpFail() 
+  local popUpDg = display.newGroup()
+  local popUp = display.newRoundedRect(0, 0, 600, 400, 5)
+  popUp:setFillColor(0.8, 0.6, 0.3)
+  popUp.alpha = 0.7
+  
+  local text1 = display.newText("Secuencia incorrecta", 0, -50, native.systemFontBold, 46)
+  local text2 = display.newText("Intentalo de nuevo.", 0, 50, native.systemFontBold, 36)
+  popUpDg:insert(popUp, true)
+  popUpDg:insert(text1)
+  popUpDg:insert(text2)
+  
+  popUpDg.x = display.contentCenterX
+  popUpDg.y = display.contentCenterY
+  return popUpDg
+end
+
+
+local function verifyAnswer()
+  print("Correct answer: " .. setup.CORRECT_ANSWER)
+  print("Your answer: " .. answer)
+  if ( answer == setup.CORRECT_ANSWER ) then
+    print("Felicidades, respuesta correcta")
+  else
+    print("Lo siento, respuesta incorrecta. Itenta de nuevo")
+    local currScene = composer.getSceneName( "current" )
+    local popUp = popUpFail()
+    timer.performWithDelay(3000, function() 
+        popUp:removeSelf()
+        composer.removeScene(currScene) 
+        composer.gotoScene("view.reloadScene", {params = {reloadScene = currScene}})
+        end)
+  end
+end
+
+
+
+local function onTouch( event )
+	local t = event.target
+	
+	local phase = event.phase
+	if "began" == phase then
+		-- Make target the top-most object
+		local parent = t.parent
+		parent:insert( t )
+		display.getCurrentStage():setFocus( t )
+		
+		-- Spurious events can be sent to the target, e.g. the user presses 
+		-- elsewhere on the screen and then moves the finger over the target.
+		-- To prevent this, we add this flag. Only when it's true will "move"
+		-- events be sent to the target.
+		t.isFocus = true
+		
+		-- Store initial position
+		t.x0 = event.x - t.x
+		t.y0 = event.y - t.y
+	elseif t.isFocus then
+		if "moved" == phase then
+			-- Make object move (we subtract t.x0,t.y0 so that moves are
+			-- relative to initial grab point, rather than object "snapping").
+			t.x = event.x - t.x0
+			t.y = event.y - t.y0
+			
+			-- Gradually show the shape's stroke depending on how much pressure is applied.
+			if ( event.pressure ) then
+				t:setStrokeColor( 1, 1, 1, event.pressure )
+			end
+		elseif "ended" == phase or "cancelled" == phase then
+			display.getCurrentStage():setFocus( nil )
+			t.isFocus = false
+			local box = getBoxHolder(event)
+			if box then
+			  event.target.x = box.x
+			  event.target.y = box.y
+			  box:insert(event.target, true)
+        answer = answer .. event.target.arrPos.value
+--			  table.insert(answer, event.target.arrPos)
+        if ( #answer == #setup.NUMBERS + 1 ) then
+          verifyAnswer()
+        end
+			else
+			  event.target.x = event.target.xStart
+			  event.target.y = event.target.yStart
+			end
+		end
+	end
+
+	-- Important to return true. This tells the system that the event
+	-- should not be propagated to listeners of any objects underneath.
+	return true
+end
+
+
 local function creaNumeros()
   local offsetX = 100
   local x = 0
@@ -33,12 +147,24 @@ local function creaNumeros()
     numeroDg.x = x * offsetX + 50
     numeroDg.y = y
 
-    numeroDg.xStart = i * offsetX + 50
+    numeroDg.xStart = x * offsetX + 50
     numeroDg.yStart = y
-    numeroDg.arrPos = i
-    x = x + 1
+    numeroDg.arrPos = val
+
+    numeroDg:addEventListener("touch", onTouch)
 
     table.insert(numeros, numeroDg)
+
+    local boxDg = display.newGroup()
+    local box = display.newRect(0, 0, 50, 50)
+
+    boxDg:insert(box, true)
+    boxDg.x = x * offsetX + 50
+    boxDg.y = y + 200
+
+    table.insert(boxes, boxDg)
+
+    x = x + 1
   end
 end
 
@@ -56,9 +182,9 @@ local function shuffleTable( t )
   return t
 end
 
-local function invert()
+function invert( tableToInvert )
   local tabla = {}
-  for k,v in pairs(reorderedNumbers) do
+  for k,v in pairs(tableToInvert) do
     local t = {}
     t.key = v
     t.value = k
@@ -79,10 +205,18 @@ function scene:create( event )
 
   local fondo = display.newRect(display.contentCenterX, display.contentCenterY, display.contentWidth, display.contentHeight)
   fondo:setFillColor(0.3, 0.5, 0.1)
-  reorderedNumbers = shuffleTable(setup.NUMBERS)
-  reorderedNumbers = invert()
+  reorderedNumbers = invert(setup.NUMBERS)
+  reorderedNumbers = shuffleTable(reorderedNumbers)
+--  reorderedNumbers = invert(reorderedNumbers)
   reorderedNumbers = shuffleTable(reorderedNumbers)
   creaNumeros()
+  sceneGroup:insert(fondo)
+  for _,obj in pairs(numeros) do
+    sceneGroup:insert(obj)
+  end
+  for _,obj in pairs(boxes) do
+    sceneGroup:insert(obj)
+  end
 
   -- Initialize the scene here
   -- Example: add display objects to "sceneGroup", add touch listeners, etc.
@@ -125,6 +259,7 @@ end
 function scene:destroy( event )
 
   local sceneGroup = self.view
+  sceneGroup:removeSelf()
 
   -- Called prior to the removal of scene's view
   -- Insert code here to clean up the scene
