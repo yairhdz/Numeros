@@ -7,24 +7,46 @@
 local sceneName = "onLoadApp"
 
 local composer = require( "composer" )
+local widget   = require( "widget" )
 
 -- Load scene with same root filename as this file
 local scene = composer.newScene()
 
 ---------------------------------------------------------------------------------
+local function buttonListener() 
+  local options = {
+    effect = "slideUp",
+    time = 500,
+    params = {
+      sampleVar1 = "my sample variable",
+      sampleVar2 = "another sample variable"
+    }
+  }
+
+  composer.gotoScene("scene2", options)
+end
+
 
 function scene:create( event )
   local sceneGroup = self.view
-  local background = display.newRect(display.contentCenterX, display.contentCenterY, display.contentWidth, display.contentHeight)
-  background:setFillColor(0.5,0.6,0.7)
 
-  local loadImage = display.newCircle(display.contentCenterX, display.contentCenterY, 50)
-  loadImage:setFillColor(0.6,0.2,0.4)
+  local loadImage = display.newImageRect(sceneGroup, "assets/load.jpg", display.contentWidth, display.contentHeight)
+  loadImage.x = display.contentCenterX
+  loadImage.y = display.contentCenterY
 
-  sceneGroup:insert(background)
-  sceneGroup:insert(loadImage)
-  --loadImage.x = 100
---    loadImage.y = 100
+  local playButton = widget.newButton(
+    {
+      label = "Jugar",
+      defaultFile = "assets/play_button.png",
+      overFile = "assets/play_button_hover.png",
+      label = "button",
+      onEvent = buttonListener
+    }
+  )
+  playButton.x = display.contentCenterX + 120
+  playButton.y = display.contentCenterY + 450
+
+  sceneGroup:insert(playButton)
 
   -- Called when the scene's view does not exist
   -- 
@@ -34,19 +56,6 @@ end
 
 function scene:show( event )
   local sceneGroup = self.view
-
-
-  local options = {
-    effect = "fade",
-    time = 400,
-    params = {
-      sampleVar1 = "my sample variable",
-      sampleVar2 = "another sample variable"
-    }
-  }
-
-  timer.performWithDelay(1000, function() composer.gotoScene("scene2", options) end)
-  print("CAMBIE A scene2")
 
 end
 
