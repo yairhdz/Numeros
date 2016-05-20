@@ -21,6 +21,8 @@ local function buttonListener( event )
     composer.gotoScene("view.secuencia", { effect = "slideRight" } )
   elseif ( touchedButton == "Ordena" ) then
     composer.gotoScene("view.ordenar", { effect = "slideRight" } )
+  elseif ( touchedButton == "Cuenta" ) then
+    composer.gotoScene("view.contar", { effect = "slideRight" } )
   end
 end
 
@@ -65,7 +67,7 @@ function scene:create( event )
       onEvent = buttonListener
     }
   )
-  
+
   sceneGroup:insert(fondo)
   sceneGroup:insert(secuenciaButton)
   sceneGroup:insert(ordenarButton)
@@ -74,7 +76,7 @@ end
 
 function scene:show( event )
   local sceneGroup = self.view
-  
+
 end
 
 
