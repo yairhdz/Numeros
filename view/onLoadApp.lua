@@ -23,7 +23,7 @@ local function buttonListener()
     }
   }
 
-  timer.performWithDelay(500, function() composer.gotoScene("scene2", options) end)
+  timer.performWithDelay(500, function() composer.gotoScene("view.menu", options) end)
 end
 
 

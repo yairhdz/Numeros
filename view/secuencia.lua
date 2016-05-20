@@ -138,10 +138,11 @@ function scene:create( event )
   fondo.x = display.contentCenterX
   fondo.y = display.contentCenterY
   sceneGroup:insert(fondo)
---fondo.width = display.actualContentWidth
---fondo.height = display.actualContentHeight
-  creaNumeros()
-  animaNumeros()
+  timer.performWithDelay(500, function()
+      creaNumeros()
+      animaNumeros()
+    end
+  )
 
   -- Called when the scene's view does not exist
   -- 
