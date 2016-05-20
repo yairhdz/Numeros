@@ -13,8 +13,10 @@ local scene = composer.newScene()
 
 -- "scene:create()"
 function scene:create( event )
-
     local sceneGroup = self.view
+    
+    local fondo = display.newRect(display.contentCenterX, display.contentCenterY, display.actualContentWidth, display.actualContentHeight)
+    sceneGroup:insert(fondo)
     
     local sceneToReload = event.params.reloadScene
     
@@ -64,6 +66,7 @@ end
 function scene:destroy( event )
 
     local sceneGroup = self.view
+    sceneGroup:removeSelf()
 
     -- Called prior to the removal of scene's view
     -- Insert code here to clean up the scene

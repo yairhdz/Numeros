@@ -7,16 +7,30 @@
 ---------------------------------------------------------------------------------
 local composer = require( "composer" )
 local setup    = require( "system.setup" )
+local widget   = require( "widget" )
 
 local scene = composer.newScene()
 local reorderedNumbers = {}
 local numeros = {}
 local boxes = {}
 local answer = ""
+local mainView = display.newGroup()
+local currScene = composer.getSceneName( "current" )
 
 
 -- -----------------------------------------------------------------------------------------------------------------
 -- Local forward references should go local function creaNumeros() 
+
+local function buttonListener( event )
+  local touchedButton = event.target:getLabel()
+  if ( touchedButton == "Menu" ) then
+    composer.removeScene(currScene)
+    composer.gotoScene("view.menu", { effect = "slideLeft" } )
+  elseif ( touchedButton == "Repetir" ) then
+    composer.removeScene(currScene)
+    composer.gotoScene("view.reloadScene", {params = {reloadScene = currScene}})
+  end
+end
 
 local function isHover(number, box)
   local fw = number.width * 0.5
@@ -55,15 +69,51 @@ end
 
 local function popUpSuccess() 
   local popUpDg = display.newGroup()
-  local popUp = display.newRoundedRect(0, 0, 600, 400, 5)
-  popUp:setFillColor(0.8, 0.6, 0.3)
-  popUp.alpha = 0.7
+  local popUp = display.newRoundedRect(0, 0, 600, 400, 20)
+  popUp:setFillColor(154 / 255, 205 / 255, 50 / 255)
+  popUp.alpha = 0.8
 
-  local text1 = display.newText("Felicidades", 0, -50, native.systemFontBold, 46)
+  local text1 = display.newText("Felicidades!!!", 0, -50, native.systemFontBold, 46)
+  text1:setFillColor(0.2, 0.6, 0.9)
   local text2 = display.newText("Tu respuesta es correcta.", 0, 50, native.systemFontBold, 36)
+  text2:setFillColor(0.2, 0.6, 0.9)
 
-  local reloadButton = display.newRoundedRect(-100, 150, 100, 50, 5)
-  local menuButton = display.newRoundedRect(100, 150, 100, 50, 5)
+  local reloadButton =  widget.newButton(
+    {
+      label = "Repetir",
+      font = native.systemFontBold,
+      fontSize = 30,
+      onEvent = buttonListener,
+      emboss = false,
+      shape = "roundedRect",
+      x = -100,
+      y = 150,
+      width = 150,
+      height = 50,
+      cornerRadius = 2,
+      fillColor = { default={0.9,0.9,0.4,1}, over={0.9,0.9,0.4,0.8} },
+      strokeColor = { default={0,0,0,1}, over={1,1,1,1} },
+      strokeWidth = 2
+    }
+  )
+  local menuButton =  widget.newButton(
+    {
+      label = "Menu",
+      font = native.systemFontBold,
+      fontSize = 30,
+      onEvent = buttonListener,
+      emboss = false,
+      shape = "roundedRect",
+      x = 100,
+      y = 150,
+      width = 150,
+      height = 50,
+      cornerRadius = 2,
+      fillColor = { default={0.9,0.9,0.4,1}, over={0.9,0.9,0.4,0.6} },
+      strokeColor = { default={0,0,0,1}, over={0.8,0.8,1,1} },
+      strokeWidth = 2
+    }
+  )
   popUpDg:insert(popUp, true)
   popUpDg:insert(text1)
   popUpDg:insert(text2)
@@ -72,7 +122,8 @@ local function popUpSuccess()
 
   popUpDg.x = display.contentCenterX
   popUpDg.y = display.contentCenterY
-  return popUpDg
+
+  mainView:insert(popUpDg)
 end
 
 
@@ -84,7 +135,6 @@ local function verifyAnswer()
     popUpSuccess()
   else
     print("Lo siento, respuesta incorrecta. Itenta de nuevo")
-    local currScene = composer.getSceneName( "current" )
     local popUp = popUpFail()
     timer.performWithDelay(3000, function() 
         popUp:removeSelf()
@@ -274,18 +324,14 @@ function scene:create( event )
 
   local sceneGroup = self.view
 
---  local fondo = display.newRect(display.contentCenterX, display.contentCenterY, display.contentWidth, display.contentHeight)
---  fondo:setFillColor(0.3, 0.5, 0.1)
   local fondo = display.newImageRect("assets/ordenar.jpg", display.contentWidth, display.contentHeight)
   fondo.x = display.contentCenterX
   fondo.y = display.contentCenterY
   reorderedNumbers = invert(setup.NUMBERS)
   reorderedNumbers = shuffleTable(reorderedNumbers)
---  reorderedNumbers = invert(reorderedNumbers)
   reorderedNumbers = shuffleTable(reorderedNumbers)
   creaBoxes()
   creaNumeros()
-
   sceneGroup:insert(fondo)
 
   for _,obj in pairs(boxes) do
@@ -337,6 +383,7 @@ function scene:destroy( event )
 
   local sceneGroup = self.view
   sceneGroup:removeSelf()
+  mainView:removeSelf()
 
   -- Called prior to the removal of scene's view
   -- Insert code here to clean up the scene
