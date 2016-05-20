@@ -137,12 +137,11 @@ local function onTouch( event )
       if box then
         event.target.x = box.x
         event.target.y = box.y
-        event.target.xScale = 2
         box:insert(event.target, true)
         event.target.width = event.target.width * 2
         event.target.height = event.target.height * 2
+        event.target:removeEventListener("touch", onTouch)
         answer = answer .. event.target.arrPos.value
---			  table.insert(answer, event.target.arrPos)
         if ( #answer == #setup.NUMBERS + 1 ) then
           verifyAnswer()
         end
@@ -206,13 +205,9 @@ local function creaBoxes()
   local y = 120
   local idx = 1
 
+
   for i,val in pairs(reorderedNumbers) do
     local boxDg = display.newGroup()
-    local box = display.newRect(0, 0, 100, 100)
-    box:setFillColor(0.6, 0.7, 0.9)
-
-
-    boxDg:insert(box, true)
 
     if (i == 5) then 
       offsetX = 330 
@@ -224,11 +219,17 @@ local function creaBoxes()
       idx = 1
     end
 
-    local img = display.newImageRect("assets/ordenar.jpg", 200, 100)
+    local img = display.newImageRect("assets/ordenar.jpg", 200, 98)
     img:setStrokeColor(0, 0.9, 0.9)
     img.strokeWidth = 2
-    img.x = offsetX + 250
-    img.y = idx * y + startY
+
+    local box = display.newRect(0, 0, 100, 100)
+    box:setFillColor(0.6, 0.7, 0.9)
+
+    boxDg:insert(box, true)
+    boxDg:insert(img, true)
+
+    img.x =  startX + 50
 
     boxDg.x = startX  + offsetX
     boxDg.y = y * idx + startY
@@ -236,7 +237,6 @@ local function creaBoxes()
     table.insert(boxes, boxDg)
 
     idx = idx + 1
---    y = y + 100
   end
 end
 
@@ -283,13 +283,15 @@ function scene:create( event )
   reorderedNumbers = shuffleTable(reorderedNumbers)
 --  reorderedNumbers = invert(reorderedNumbers)
   reorderedNumbers = shuffleTable(reorderedNumbers)
-  creaNumeros()
   creaBoxes()
+  creaNumeros()
+
   sceneGroup:insert(fondo)
-  for _,obj in pairs(numeros) do
+
+  for _,obj in pairs(boxes) do
     sceneGroup:insert(obj)
   end
-  for _,obj in pairs(boxes) do
+  for _,obj in pairs(numeros) do
     sceneGroup:insert(obj)
   end
 
