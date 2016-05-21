@@ -64,11 +64,15 @@ end
 function animaNumeros() 
   local currentNumber = numeros[currentIdx]
   local texto = nil
+  local img = nil
 
   transition.moveTo(currentNumber, { time = time, x = 300, y = 500}) 
   timer.performWithDelay(time, function() 
       transition.scaleTo(currentNumber, {xScale = 2.5, yScale = 2.5})
       texto = display.newText(nums[currentIdx - 1], currentNumber.x, currentNumber.y + 100, native.systemFont, 80 )
+      img = display.newImageRect("assets/" .. (currentIdx - 1) .. ".png", 500, 250)
+      img.x = currentNumber.x + 350
+      img.y = currentNumber.y + 35
     end)
 
   timer.performWithDelay(time * 2, function() 
@@ -77,6 +81,7 @@ function animaNumeros()
 
   timer.performWithDelay(time * 2 + 500, function() 
       texto:removeSelf()
+      img:removeSelf()
       transition.moveTo(currentNumber, {time = time, x = currentNumber.xStart, y = currentNumber.yStart}) 
     end)
 end
