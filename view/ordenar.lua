@@ -269,7 +269,7 @@ local function creaBoxes()
       idx = 1
     end
 
-    local img = display.newImageRect("assets/ordenar.jpg", 200, 98)
+    local img = display.newImageRect("assets/" .. i - 1 .. ".png", 200, 98)
     img:setStrokeColor(0, 0.9, 0.9)
     img.strokeWidth = 2
 
