@@ -17,6 +17,8 @@ local currentNumber = nil
 local currentIdx = 1
 local time = 1000
 local nums = { [0] = "cero", "Uno", "Dos", "Tres", "Cuatro", "Cinco", "Seis", "Siete", "Ocho", "Nueve"}
+local viewGroup = display.newGroup()
+local currentScene = composer.getSceneName( "current" )
 ---------------------------------------------------------------------------------
 
 local function creaNumeros() 
@@ -53,10 +55,7 @@ local function animaSiguiente( obj )
     currentIdx = currentIdx + 1
     animaNumeros()
   else
-    -- Ya terminaron de mostrarse todos los numero
-    -- se tiene que activar el touch de cada uno
-    print("ACTIVAR TOUCH")
-    timer.performWithDelay(time, function() activateTouch() end)
+    showOptions() 
   end
 end
 
@@ -75,14 +74,10 @@ function animaNumeros()
       img.y = currentNumber.y + 35
     end)
 
-  timer.performWithDelay(time * 2, function() 
-      transition.scaleTo(currentNumber, {xScale = 1, yScale = 1, onComplete = animaSiguiente}) 
-    end)
-
-  timer.performWithDelay(time * 2 + 500, function() 
+  timer.performWithDelay(time * 2 + (currentIdx * (time / 2)), function() 
       texto:removeSelf()
       img:removeSelf()
-      transition.moveTo(currentNumber, {time = time, x = currentNumber.xStart, y = currentNumber.yStart}) 
+      transition.moveTo(currentNumber, {time = time, x = currentNumber.xStart, y = currentNumber.yStart, xScale = 1, yScale = 1, onComplete = animaSiguiente}) 
     end)
 end
 
@@ -92,28 +87,44 @@ local function touchListener( event )
     currentIdx = 1
     animaNumeros()
     event.target:removeSelf()
+    event.target.menu:removeSelf()
   end
 end
 
-
-function activateTouch()
-
-
--- Function to handle button events
-  local function handleButtonEvent( event )
-
-    if ( "ended" == event.phase ) then
-      print( "Button was pressed and released" )
-    end
+local function menuListener( event )
+  if event.phase == "ended" then
+    composer.removeScene(currentScene)
+    composer.gotoScene("view.menu")
   end
+end
 
--- Create the widget
-  local button1 = widget.newButton(
+function showOptions()
+  local repetirButton = widget.newButton(
     {
       label = "Repetir",
       font = native.systemFontBold,
       fontSize = 40,
       onEvent = touchListener,
+      emboss = false,
+      -- Properties for a rounded rectangle button
+      shape = "roundedRect",
+      x = display.contentCenterX + 350,
+      y = display.contentCenterY + 220,
+      width = 200,
+      height = 60,
+      cornerRadius = 2,
+      fillColor = { default={0.9,0.9,0.4,1}, over={0.9,0.9,0.4,0.6} },
+      strokeColor = { default={0,0,0,1}, over={0.8,0.8,1,1} },
+      strokeWidth = 4
+    }
+  )
+
+  local menuButton = widget.newButton(
+    {
+      label = "Menu",
+      font = native.systemFontBold,
+      fontSize = 40,
+      onEvent = menuListener,
       emboss = false,
       -- Properties for a rounded rectangle button
       shape = "roundedRect",
@@ -127,12 +138,10 @@ function activateTouch()
       strokeWidth = 4
     }
   )
-
--- Center the button
-
-
--- Change the button's label text
---button1:setLabel( "Shape" )
+  
+  repetirButton.menu = menuButton
+  viewGroup:insert(repetirButton)
+  viewGroup:insert(menuButton)
 end
 
 
@@ -191,6 +200,11 @@ end
 
 function scene:destroy( event )
   local sceneGroup = self.view
+  for _,obj in pairs(numeros) do
+    viewGroup:insert(obj)
+  end
+  sceneGroup:removeSelf()
+  viewGroup:removeSelf()
 
   -- Called prior to the removal of scene's "view" (sceneGroup)
   -- 
