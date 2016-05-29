@@ -13,7 +13,8 @@ local scene = composer.newScene()
 local reorderedNumbers = {}
 local numeros = {}
 local boxes = {}
-local answer = ""
+local totalAnswers = 0
+local correctAnswers = 0
 local mainView = display.newGroup()
 local currScene = composer.getSceneName( "current" )
 
@@ -128,9 +129,7 @@ end
 
 
 local function verifyAnswer()
-  print("Correct answer: " .. setup.CORRECT_ANSWER)
-  print("Your answer: " .. answer)
-  if ( answer == setup.CORRECT_ANSWER ) then
+  if ( correctAnswers == #reorderedNumbers ) then
     print("Felicidades, respuesta correcta")
     popUpSuccess()
   else
@@ -191,8 +190,14 @@ local function onTouch( event )
         event.target.width = event.target.width * 2
         event.target.height = event.target.height * 2
         event.target:removeEventListener("touch", onTouch)
-        answer = answer .. event.target.arrPos.value
-        if ( #answer == #setup.NUMBERS + 1 ) then
+
+        if (event.target.id.value == box.id.value) then
+          correctAnswers = correctAnswers + 1
+        end
+
+        totalAnswers = totalAnswers + 1
+
+        if ( totalAnswers == #reorderedNumbers ) then
           verifyAnswer()
         end
       else
@@ -209,6 +214,30 @@ local function onTouch( event )
   return true
 end
 
+local function shuffleTable( t )
+  local rand = math.random 
+  assert( t, "shuffleTable() expected a table, got nil" )
+  local iterations = #t
+  local j
+
+  for i = iterations, 2, -1 do
+    j = rand(i)
+    t[i], t[j] = t[j], t[i]
+  end
+  return t
+end
+
+function invert( tableToInvert )
+  local tabla = {}
+  for k,v in pairs(tableToInvert) do
+    local t = {}
+    t.key = v
+    t.value = k
+    table.insert(tabla,t)
+--    tabla[v] = t
+  end
+  return tabla
+end
 
 local function creaNumeros()
   local offsetX = 100
@@ -238,7 +267,7 @@ local function creaNumeros()
 
     numeroDg.xStart = idx * offsetX + 50 + startX
     numeroDg.yStart = y
-    numeroDg.arrPos = val
+    numeroDg.id = reorderedNumbers[i]
 
     numeroDg:addEventListener("touch", onTouch)
 
@@ -254,9 +283,12 @@ local function creaBoxes()
   local startY = 200
   local y = 120
   local idx = 1
+  local newNumbers = invert(setup.NUMBERS)
+  newNumbers = shuffleTable(newNumbers)
+  newNumbers = shuffleTable(newNumbers)
 
 
-  for i,val in pairs(reorderedNumbers) do
+  for i,val in pairs(newNumbers) do
     local boxDg = display.newGroup()
 
     if (i == 5) then 
@@ -269,7 +301,7 @@ local function creaBoxes()
       idx = 1
     end
 
-    local img = display.newImageRect("assets/" .. i - 1 .. ".png", 200, 98)
+    local img = display.newImageRect("assets/" .. val.value .. ".png", 200, 98)
     img:setStrokeColor(0, 0.9, 0.9)
     img.strokeWidth = 2
 
@@ -284,35 +316,12 @@ local function creaBoxes()
     boxDg.x = startX  + offsetX
     boxDg.y = y * idx + startY
 
+    boxDg.id = newNumbers[i]
+
     table.insert(boxes, boxDg)
 
     idx = idx + 1
   end
-end
-
-local function shuffleTable( t )
-  local rand = math.random 
-  assert( t, "shuffleTable() expected a table, got nil" )
-  local iterations = #t
-  local j
-
-  for i = iterations, 2, -1 do
-    j = rand(i)
-    t[i], t[j] = t[j], t[i]
-  end
-  return t
-end
-
-function invert( tableToInvert )
-  local tabla = {}
-  for k,v in pairs(tableToInvert) do
-    local t = {}
-    t.key = v
-    t.value = k
-    table.insert(tabla,t)
---    tabla[v] = t
-  end
-  return tabla
 end
 
 
