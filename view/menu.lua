@@ -4,12 +4,10 @@
 --
 ---------------------------------------------------------------------------------
 
-local sceneName = ...
-
 local composer = require( "composer" )
 local widget   = require( "widget" )
 local currentScene  = composer.getSceneName("current")
-local scene = composer.newScene( sceneName )
+local scene = composer.newScene()
 
 ---------------------------------------------------------------------------------
 
