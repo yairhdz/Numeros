@@ -8,21 +8,24 @@ local sceneName = ...
 
 local composer = require( "composer" )
 local widget   = require( "widget" )
-
--- Load scene with same root filename as this file
+local currentScene  = composer.getSceneName("current")
 local scene = composer.newScene( sceneName )
 
 ---------------------------------------------------------------------------------
 
 local function buttonListener( event )
-  print("TOUCHED".. event.target:getLabel())
   local touchedButton = event.target.id
+  composer.removeScene(currentScene)
   if ( touchedButton == "aprende" ) then
     composer.gotoScene("view.secuencia", { effect = "slideRight" } )
   elseif ( touchedButton == "ordena" ) then
     composer.gotoScene("view.ordenar", { effect = "slideRight" } )
   elseif ( touchedButton == "cuenta" ) then
     composer.gotoScene("view.contar", { effect = "slideRight" } )
+  elseif ( touchedButton == "contacto" ) then
+    composer.gotoScene("view.contacto", { effect = "fade"} )
+  elseif ( touchedButton == "acercade" ) then
+    composer.gotoScene("view.acercade", { effect = "fade"} )
   end
 end
 
@@ -75,10 +78,35 @@ function scene:create( event )
   )
   contarButton.id = "cuenta"
 
+  local contacto = display.newImage("assets/contacto.png", true)
+  contacto.xScale = 0.4
+  contacto.yScale = 0.4
+  contacto.x = display.contentCenterX - 250
+  contacto.y = display.contentCenterY + 250
+
+  local contactoButton = display.newImage("assets/contacto_button.png")
+  contactoButton.id = "contacto"
+  contactoButton.xScale = 0.4
+  contactoButton.yScale = 0.4
+  contactoButton.x = display.contentCenterX - 265
+  contactoButton.y = display.contentCenterY + 175
+  contactoButton:addEventListener("touch", buttonListener)
+
+  local acercaButton = display.newImage("assets/acercade_button.png")
+  acercaButton.id = "acercade"
+  acercaButton.xScale = 0.4
+  acercaButton.yScale = 0.4
+  acercaButton.x = display.contentCenterX - 237
+  acercaButton.y = display.contentCenterY + 245
+  acercaButton:addEventListener("touch", buttonListener)
+
   sceneGroup:insert(fondo)
   sceneGroup:insert(secuenciaButton)
   sceneGroup:insert(ordenarButton)
   sceneGroup:insert(contarButton)
+  sceneGroup:insert(contacto)
+  sceneGroup:insert(contactoButton)
+  sceneGroup:insert(acercaButton)
 end
 
 function scene:show( event )
@@ -89,6 +117,7 @@ end
 
 function scene:destroy( event )
   local sceneGroup = self.view
+  sceneGroup:removeSelf()
 
   -- Called prior to the removal of scene's "view" (sceneGroup)
   -- 
