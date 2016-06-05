@@ -8,6 +8,7 @@ local sceneName = ...
 
 local composer = require( "composer" )
 local widget  = require( "widget" )
+local texttospeech = require('plugin.texttospeech')
 
 -- Load scene with same root filename as this file
 local scene = composer.newScene( sceneName )
@@ -19,7 +20,9 @@ local time = 1000
 local nums = { [0] = "cero", "Uno", "Dos", "Tres", "Cuatro", "Cinco", "Seis", "Siete", "Ocho", "Nueve"}
 local viewGroup = display.newGroup()
 local currentScene = composer.getSceneName( "current" )
+
 ---------------------------------------------------------------------------------
+texttospeech.init()
 
 local function creaNumeros() 
   local offsetX = 90
@@ -69,6 +72,8 @@ function animaNumeros()
   timer.performWithDelay(time, function() 
       transition.scaleTo(currentNumber, {xScale = 2.5, yScale = 2.5})
       texto = display.newText(nums[currentIdx - 1], currentNumber.x, currentNumber.y + 100, native.systemFont, 80 )
+      texttospeech.speak(nums[currentIdx - 1], {language = 'es-MX',
+          voice = 'default'}) 
       img = display.newImageRect("assets/" .. (currentIdx - 1) .. ".png", 500, 250)
       img.x = currentNumber.x + 350
       img.y = currentNumber.y + 35
@@ -138,7 +143,7 @@ function showOptions()
       strokeWidth = 4
     }
   )
-  
+
   repetirButton.menu = menuButton
   viewGroup:insert(repetirButton)
   viewGroup:insert(menuButton)

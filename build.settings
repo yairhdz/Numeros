@@ -14,6 +14,9 @@ settings =
 		default = "landscapeRight",
 		supported = { "landscapeRight", }
 	},
+	plugins = {  
+		['plugin.texttospeech'] = {publisherId = 'com.spiralcodestudio'}
+	},
 	
 	excludeFiles =
 	{
