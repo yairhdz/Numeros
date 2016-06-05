@@ -17,6 +17,9 @@ local totalAnswers = 0
 local correctAnswers = 0
 local mainView = display.newGroup()
 local currScene = composer.getSceneName( "current" )
+local laserSound = audio.loadSound( "assets/sound/coloca.wav" )
+local correctSound = audio.loadSound( "assets/sound/correcto.wav" )
+local failSound = audio.loadSound( "assets/sound/fail.m4a" )
 
 
 -- -----------------------------------------------------------------------------------------------------------------
@@ -65,6 +68,7 @@ local function popUpFail()
 
   popUpDg.x = display.contentCenterX
   popUpDg.y = display.contentCenterY
+  local laserChannel = audio.play( failSound )
   return popUpDg
 end
 
@@ -125,6 +129,7 @@ local function popUpSuccess()
   popUpDg.y = display.contentCenterY
 
   mainView:insert(popUpDg)
+  local laserChannel = audio.play( correctSound )
 end
 
 
@@ -186,11 +191,11 @@ local function onTouch( event )
       if box then
         event.target.x = box.x
         event.target.y = box.y
+        local laserChannel = audio.play( laserSound )
         box:insert(event.target, true)
         event.target.width = event.target.width * 2
         event.target.height = event.target.height * 2
         event.target:removeEventListener("touch", onTouch)
-
         if (event.target.id.value == box.id.value) then
           correctAnswers = correctAnswers + 1
         end
