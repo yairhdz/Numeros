@@ -26,10 +26,17 @@ local function buttonListener()
   timer.performWithDelay(500, function() composer.gotoScene("view.menu", options) end)
 end
 
+local function initializeSound()
+--  local backGroundMusic = audio.loadSound( "laserBlast.wav" )
+  local backgroundMusic = audio.loadStream( "assets/sound/music.mp3" )
+  
+  local backgroundMusicChannel = audio.play( backgroundMusic, { channel=1, loops=-1, fadein=5000 } )
+end
+
 
 function scene:create( event )
   local sceneGroup = self.view
-
+  initializeSound()
   local loadImage = display.newImageRect(sceneGroup, "assets/load.jpg", display.contentWidth, display.contentHeight)
   loadImage.x = display.contentCenterX
   loadImage.y = display.contentCenterY
