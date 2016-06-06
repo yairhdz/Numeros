@@ -9,6 +9,7 @@ local sceneName = ...
 local composer = require( "composer" )
 local widget  = require( "widget" )
 local texttospeech = require('plugin.texttospeech')
+local setup = require("system.setup")
 
 -- Load scene with same root filename as this file
 local scene = composer.newScene( sceneName )
@@ -72,11 +73,15 @@ function animaNumeros()
   timer.performWithDelay(time, function() 
       transition.scaleTo(currentNumber, {xScale = 2.5, yScale = 2.5})
       texto = display.newText(nums[currentIdx - 1], currentNumber.x, currentNumber.y + 100, native.systemFont, 80 )
-      texttospeech.speak(nums[currentIdx - 1], {language = 'es-MX',
-          voice = 'default'}) 
       img = display.newImageRect("assets/" .. (currentIdx - 1) .. ".png", 500, 250)
       img.x = currentNumber.x + 350
       img.y = currentNumber.y + 35
+      if setup.soundError then
+        local numberSound = audio.loadSound( "assets/sound/" .. nums[currentIdx -1] .. ".mp3")
+        local laserChannel = audio.play( numberSound )
+      else
+        texttospeech.speak(nums[currentIdx - 1], {language = 'es-MX', voice = 'default'}) 
+      end
     end)
 
   timer.performWithDelay(time * 2 + (currentIdx * (time / 2)), function() 

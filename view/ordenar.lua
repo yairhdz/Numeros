@@ -8,6 +8,7 @@
 local composer = require( "composer" )
 local setup    = require( "system.setup" )
 local widget   = require( "widget" )
+local texttospeech = require('plugin.texttospeech')
 
 local scene = composer.newScene()
 local reorderedNumbers = {}
@@ -24,6 +25,8 @@ local failSound = audio.loadSound( "assets/sound/fail.m4a" )
 
 -- -----------------------------------------------------------------------------------------------------------------
 -- Local forward references should go local function creaNumeros() 
+
+texttospeech.init()
 
 local function buttonListener( event )
   local touchedButton = event.target:getLabel()
@@ -58,7 +61,7 @@ local function popUpFail()
   local popUpDg = display.newGroup()
   local popUp = display.newRoundedRect(0, 0, 600, 400, 5)
   popUp:setFillColor(0.8, 0.6, 0.3)
-  popUp.alpha = 0.7
+  popUp.alpha = 0.8
 
   local text1 = display.newText("Secuencia incorrecta", 0, -50, native.systemFontBold, 46)
   local text2 = display.newText("Intentalo de nuevo.", 0, 50, native.systemFontBold, 36)
@@ -355,64 +358,79 @@ function scene:create( event )
     sceneGroup:insert(obj)
   end
 
-  -- Initialize the scene here
-  -- Example: add display objects to "sceneGroup", add touch listeners, etc.
-end
+  if setup.soundError then
+    print("ERROR")
+    local instruccionesSound = audio.loadSound( "assets/sound/instrucciones.mp3" )
+    timer.performWithDelay(500, function() local laserChannel = audio.play( instruccionesSound ) end)
+
+else
+  print("SI HAY PLUGIN")
+    timer.performWithDelay(500, function() texttospeech.speak("Cuenta las estrellas y coloca el numero que le corresponda como se muestra", {
+            language = 'es-MX', voice = 'default'}) end) 
+
+
+    end
+    timer.performWithDelay(4500, function() transition.moveTo(numeros[1], {x = boxes[1].x, y = boxes[1].y, xScale = 2.0, yScale = 2.0, time = 1000}) end)
+    timer.performWithDelay(6000, function() transition.moveTo(numeros[1], {x = numeros[1].xStart, y = numeros[1].yStart, xScale = 1.0, yScale = 1.0, time = 1000}) end)
+
+    -- Initialize the scene here
+    -- Example: add display objects to "sceneGroup", add touch listeners, etc.
+  end
 
 
 -- "scene:show()"
-function scene:show( event )
+  function scene:show( event )
 
-  local sceneGroup = self.view
-  local phase = event.phase
+    local sceneGroup = self.view
+    local phase = event.phase
 
-  if ( phase == "will" ) then
-    -- Called when the scene is still off screen (but is about to come on screen)
-  elseif ( phase == "did" ) then
-    -- Called when the scene is now on screen
-    -- Insert code here to make the scene come alive
-    -- Example: start timers, begin animation, play audio, etc.
+    if ( phase == "will" ) then
+      -- Called when the scene is still off screen (but is about to come on screen)
+    elseif ( phase == "did" ) then
+      -- Called when the scene is now on screen
+      -- Insert code here to make the scene come alive
+      -- Example: start timers, begin animation, play audio, etc.
+    end
   end
-end
 
 
 -- "scene:hide()"
-function scene:hide( event )
+  function scene:hide( event )
 
-  local sceneGroup = self.view
-  local phase = event.phase
+    local sceneGroup = self.view
+    local phase = event.phase
 
-  if ( phase == "will" ) then
-    -- Called when the scene is on screen (but is about to go off screen)
-    -- Insert code here to "pause" the scene
-    -- Example: stop timers, stop animation, stop audio, etc.
-  elseif ( phase == "did" ) then
-    -- Called immediately after scene goes off screen
+    if ( phase == "will" ) then
+      -- Called when the scene is on screen (but is about to go off screen)
+      -- Insert code here to "pause" the scene
+      -- Example: stop timers, stop animation, stop audio, etc.
+    elseif ( phase == "did" ) then
+      -- Called immediately after scene goes off screen
+    end
   end
-end
 
 
 -- "scene:destroy()"
-function scene:destroy( event )
+  function scene:destroy( event )
 
-  local sceneGroup = self.view
-  sceneGroup:removeSelf()
-  mainView:removeSelf()
+    local sceneGroup = self.view
+    sceneGroup:removeSelf()
+    mainView:removeSelf()
 
-  -- Called prior to the removal of scene's view
-  -- Insert code here to clean up the scene
-  -- Example: remove display objects, save state, etc.
-end
+    -- Called prior to the removal of scene's view
+    -- Insert code here to clean up the scene
+    -- Example: remove display objects, save state, etc.
+  end
 
 
 -- -------------------------------------------------------------------------------
 
 -- Listener setup
-scene:addEventListener( "create", scene )
-scene:addEventListener( "show", scene )
-scene:addEventListener( "hide", scene )
-scene:addEventListener( "destroy", scene )
+  scene:addEventListener( "create", scene )
+  scene:addEventListener( "show", scene )
+  scene:addEventListener( "hide", scene )
+  scene:addEventListener( "destroy", scene )
 
 -- -------------------------------------------------------------------------------
 
-return scene
+  return scene

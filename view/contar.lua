@@ -10,8 +10,8 @@ local scene = composer.newScene()
 -- local forward references should go here
 local path = "assets/contar/"
 local escenarios = {
-                    {imagen = "escenario2.png", contenido = {{objeto= "elefantes", cantidad = "1"}, {objeto= "jirafas", cantidad = "2"}, {objeto= "leones", cantidad = "3"}, {objeto= "tigres", cantidad = "4"}}},
-                    {imagen = "escenario3.png", contenido = {{objeto= "perros", cantidad = "5"}, {objeto= "gatos", cantidad = "6"}}}
+                    {imagen = "escenario2.png", contenido = {{objeto= "ovejas", cantidad = "3"}, {objeto= "vacas", cantidad = "2"}, {objeto= "arboles", cantidad = "6"}, {objeto= "pinos", cantidad = "4"}}},
+                    {imagen = "escenario3.png", contenido = {{objeto= "nubes", cantidad = "5"}, {objeto= "aves", cantidad = "6"}, {objeto= "montañas", cantidad = "9"}}}
                    }
                    
 local tiempoTransicion = 3000                   
@@ -111,6 +111,7 @@ end
 local function cargaImagen(escenario)
   local nombreImagen = escenario.imagen
   local imagen = display.newImage(path .. nombreImagen, true)
+  imagen.height = 600
   return imagen
 end
 
@@ -182,14 +183,21 @@ end
 function scene:create( event )
   
   local fondo = display.newRect(display.contentCenterX, display.contentCenterY, display.actualContentWidth, display.actualContentWidth)
-  fondo:setFillColor(0.1, 0.3, 0.5)
+  fondo:setFillColor(150 / 205, 215 / 255, 50 / 255)
     
-  siguientePregunta = display.newCircle(800,700,20)
-  siguientePregunta:setFillColor(0.8, 0.1,0)
+  siguientePregunta = display.newImage("assets/controls/continuar_button.png")
+  siguientePregunta.xScale = 0.5
+  siguientePregunta.yScale = 0.5
+  siguientePregunta.x = 800
+  siguientePregunta.y = 700
   siguientePregunta.isVisible = false
   siguientePregunta:addEventListener("touch", siguientePreguntaListener)
     
-  siguienteEjercicio = display.newCircle(800,700,20)
+  siguienteEjercicio = display.newImage("assets/controls/siguiente_button.png")
+  siguienteEjercicio.xScale = 0.7
+  siguienteEjercicio.yScale = 0.7
+  siguienteEjercicio.x = 800
+  siguienteEjercicio.y = 700
   siguienteEjercicio.isVisible = false
   siguienteEjercicio:addEventListener("touch", siguienteEjercicioListener)
     

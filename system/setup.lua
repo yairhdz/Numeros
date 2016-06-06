@@ -7,7 +7,7 @@
 local setup = {}
 
 setup.NUMBERS = { [0] = "cero", "Uno", "Dos", "Tres", "Cuatro", "Cinco", "Seis", "Siete", "Ocho", "Nueve"}
-setup.CORRECT_ANSWER = "0123456789"
+setup.soundError = false
 
 
 return  setup

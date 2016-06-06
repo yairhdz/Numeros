@@ -31,6 +31,7 @@ local function initializeSound()
   local backgroundMusic = audio.loadStream( "assets/sound/music.mp3" )
   
   local backgroundMusicChannel = audio.play( backgroundMusic, { channel=1, loops=-1, fadein=5000 } )
+  audio.setMaxVolume( 0.8, { channel=1 } )
 end
 
 
